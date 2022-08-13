@@ -1,0 +1,3 @@
+source[1]: https://stackoverflow.com/questions/28656736/using-scikits-labelencoder-correctly-across-multiple-programs
+source[2]: https://medium.com/@morga046/multi-class-text-classification-with-doc2vec-and-t-sne-a-full-tutorial-55eb24fc40d3
+source[3]: https://stackoverflow.com/a/59752867/14346350

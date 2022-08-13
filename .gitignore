@@ -1,0 +1,5 @@
+/documents
+/predict
+.idea/
+prediction_dataframe.pkl
+training_dataframe.pkl
