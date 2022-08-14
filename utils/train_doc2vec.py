@@ -1,7 +1,8 @@
+import os
 import numpy as np
 import joblib
 
-from settings import TRAIN_FINAL, CV_SPLITS, EPOCHS, TRAIN_ONCE
+from settings import TRAIN_FINAL, CV_SPLITS, EPOCHS, TRAIN_ONCE, SAVE_TO_DISK, STORAGE_DIR
 
 from utils.get_documents import create_training_dataframe
 from utils.preprocessing import text_preprocessing
@@ -30,8 +31,8 @@ def train_model(model : Doc2Vec, tagged_tr : list[TaggedDocument], y_train, save
     lrc.fit(X_train, y_train)
 
     if save_to_disk:
-        model.save('storage/doc2vec.model')
-        joblib.dump(lrc, "storage/lrc.pkl")
+        model.save(os.path.join(STORAGE_DIR, 'doc2vec.model'))
+        joblib.dump(lrc, os.path.join(STORAGE_DIR, 'lrc.pkl'))
     return model, lrc
 
 
@@ -45,7 +46,7 @@ def test_model(model : Doc2Vec, lrc : LogisticRegression, tagged_test : list[Tag
     return accuracy_score(y_true=y_test, y_pred=y_pred)
 
 
-df = create_training_dataframe(use_saved=True)
+df = create_training_dataframe(use_saved=True, clf="doc2vec")
 
 transformer = FunctionTransformer(text_preprocessing)
 
@@ -66,6 +67,7 @@ if not TRAIN_FINAL:
     # using StratifiedKFold for train_test_split
     skf = StratifiedKFold(n_splits=CV_SPLITS, shuffle=True)
     accuracies = []
+    split_index = 1
     for train_index, test_index in skf.split(df["content"], df["category"]):
         # applying the transform function on training and testing data
         X_train, X_test = t_pipeline.transform(df["content"][train_index]), t_pipeline.transform(df["content"][test_index])
@@ -75,20 +77,25 @@ if not TRAIN_FINAL:
         tagged_tr = [TaggedDocument(words=(str(X).split()), tags=[str(i)]) for i, X in enumerate(X_train)]
         tagged_test = [TaggedDocument(words=(str(X).split()), tags=[str(i)]) for i, X in enumerate(X_test)]
 
-        trained_model, lrc = train_model(base_model, tagged_tr, y_train)
+        if split_index == CV_SPLITS or TRAIN_ONCE:
+            trained_model, lrc = train_model(base_model, tagged_tr, y_train, save_to_disk=SAVE_TO_DISK)
+        else:
+            trained_model, lrc = train_model(base_model, tagged_tr, y_train, save_to_disk=False)
         accuracy = test_model(trained_model, lrc, tagged_test, y_test)
         accuracies.append(accuracy)
 
         if TRAIN_ONCE:
             break
 
+        split_index += 1
+
     print(accuracies)
     print("The mean accuracy is", np.mean(accuracies))
     print("Please note, this is the mean accuracy on each 500 word chunk. If your document constists of more than 500 words, it is probably way better.")
 
-else:  # TRAIN_FINAL == TRUE; no testing, whole dataset is used for training
+else:  # TRAIN_FINAL == TRUE; no testing, the whole dataset is used for training
     X_train = t_pipeline.transform(df["content"])
     y_train = df["category"]
 
     tagged_tr = [TaggedDocument(words=(str(X).split()), tags=[str(i)]) for i, X in enumerate(X_train)]
-    train_model(base_model, tagged_tr, y_train)
+    train_model(base_model, tagged_tr, y_train, save_to_disk=SAVE_TO_DISK)

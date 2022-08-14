@@ -20,21 +20,15 @@ t_pipeline = Pipeline(steps=[
     ("trans", transformer)
 ])
 
-
-model = Doc2Vec.load("storage/doc2vec.model")
-lrc = joblib.load("storage/lrc.pkl")
-
-
-
+model = Doc2Vec.load(os.path.join(STORAGE_DIR, 'doc2vec.model'))
+lrc = joblib.load(os.path.join(STORAGE_DIR, 'lrc.pkl'))
 
 tagged_X = [TaggedDocument(words=(str(X).split()), tags=[str(i)]) for i, X in enumerate(t_pipeline.transform(prediction_dataframe["content"]))]
 
 X = np.array([model.infer_vector(tagged_X[i][0]) for i in range(len(tagged_X))])
 y_pred = lrc.predict(X)
 y_pred_probas = lrc.predict_proba(X)
-print(y_pred_probas)
-print("#" * 100)
-print(y_pred)
+
 prediction_dict = {}
 for i, row in prediction_dataframe.iterrows():
     if row["filepath"] not in prediction_dict:
@@ -42,7 +36,7 @@ for i, row in prediction_dataframe.iterrows():
     prediction_dict[row["filepath"]].append(y_pred_probas[i])
 
 le = LabelEncoder()
-le.classes_ = np.load(os.path.join(STORAGE_DIR, 'labelencoder_classes.npy'), allow_pickle=True)
+le.classes_ = np.load(os.path.join(STORAGE_DIR, 'labelencoder_classes_doc2vec.npy'), allow_pickle=True)
 
 for key, value in prediction_dict.items():
     if OUTPUT_PROBA:

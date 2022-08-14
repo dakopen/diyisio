@@ -33,5 +33,6 @@ EPOCHS = 100  # (recommended), 50 will do fine too
 
 TRAIN_FINAL = False
 TRAIN_ONCE = True
+SAVE_TO_DISK = any([TRAIN_FINAL, False])  # set True to False in order to disable SAVE_TO_DISK if TRAIN_FINAL is False
 
 OUTPUT_PROBA = False  # set to True, if you're interested in the probabilities

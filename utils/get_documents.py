@@ -65,7 +65,7 @@ def get_file_content(filepath):
     return " ".join(extracted_text)
 
 
-def create_training_dataframe(use_saved=True):
+def create_training_dataframe(use_saved=True, clf: str = "doc2vec"):
     """Creates and returns pandas Dataframe build from the 'documents' directory. Contains category and prediction.
     Content may dispense over multiple rows."""
     try:
@@ -88,7 +88,7 @@ def create_training_dataframe(use_saved=True):
 
         df['category'] = le.transform(df['category'])  # transforms a class name to the corresponding encoded label
 
-        np.save('storage/labelencoder_classes.npy', le.classes_)  # see source[1]
+        np.save(os.path.join(STORAGE_DIR, f'labelencoder_classes_{clf}.npy'), le.classes_)  # see source[1]
 
         df["content"] = df.apply(lambda row: get_file_content(row["filepath"]), axis=1)
         df = df.drop(['filepath'], axis=1)
