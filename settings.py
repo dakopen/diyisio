@@ -12,11 +12,19 @@ PREDICT_DIR = os.path.join(BASE_DIR, "predict")
 
 USE_TRAINED = True
 
+
 def get_least_populated_category():
     folderlist = ([x for x in os.walk(DOCUMENTS_DIR)])
 
-    # ignored (empty) folders are set to 10000, therefore don't affect the minimum
-    return len(min(folderlist[1:], key=lambda folder: len(folder[2]) if len(folder[2]) != 0 else 10000)[2])
+    min_file_count = []
+    for folder in folderlist:
+        i = 0
+        for file in folder[2]:
+            if str(file).lower().endswith(".docx") or str(file).lower().endswith(".pdf"):
+                i += 1
+        if i > 0:
+            min_file_count.append(min_file_count)
+    return min(min_file_count)
 
 
 # see source[3] for the difference between stemming and lemmatization
@@ -29,10 +37,10 @@ CV_SPLITS = min(([int(get_least_populated_category()/2), 15]))  # set the CV_SPL
 if CV_SPLITS < 5:
     warnings.warn("Please provide at least 10 examples per category")
 
-EPOCHS = 100  # (recommended), 50 will do fine too
+EPOCHS = 100  # (100 is recommended), 50 will do fine too. The EPOCHS only apply to the doc2vec training.
 
 TRAIN_FINAL = False
-TRAIN_ONCE = True
+TRAIN_ONCE = False
 SAVE_TO_DISK = any([TRAIN_FINAL, False])  # set True to False in order to disable SAVE_TO_DISK if TRAIN_FINAL is False
 
 OUTPUT_PROBA = False  # set to True, if you're interested in the probabilities

@@ -17,7 +17,7 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 
 # see source[2] (only parts were adopted)
-def train_model(model : Doc2Vec, tagged_tr : list[TaggedDocument], y_train, save_to_disk=True):
+def train_model(model: Doc2Vec, tagged_tr: list[TaggedDocument], y_train, save_to_disk=True):
     model.build_vocab(tagged_tr)
     for epoch in range(EPOCHS):
         print(f'Training Epoch {epoch + 1}')
@@ -37,12 +37,12 @@ def train_model(model : Doc2Vec, tagged_tr : list[TaggedDocument], y_train, save
 
 
 # see source[2]
-def test_model(model : Doc2Vec, lrc : LogisticRegression, tagged_test : list[TaggedDocument], y_test):
+def test_model(model: Doc2Vec, lrc: LogisticRegression, tagged_test: list[TaggedDocument], y_test):
     X_test = np.array([model.infer_vector(tagged_test[i][0]) for i in range(len(tagged_test))])
     y_pred = lrc.predict(X_test)
 
     print(classification_report(y_true=y_test, y_pred=y_pred))
-    heatconmat(y_true=y_test, y_pred=y_pred)
+    #heatconmat(y_true=y_test, y_pred=y_pred)
     return accuracy_score(y_true=y_test, y_pred=y_pred)
 
 
@@ -53,15 +53,6 @@ transformer = FunctionTransformer(text_preprocessing)
 t_pipeline = Pipeline(steps=[
     ("trans", transformer)
 ])
-
-# model is named to base_model to resolve overwriting issues
-base_model = Doc2Vec(
-    vector_size=100,
-    window=5,
-    min_count=3,
-    dm=1,
-    workers=8,
-    epochs=EPOCHS)
 
 if not TRAIN_FINAL:
     # using StratifiedKFold for train_test_split
@@ -78,9 +69,25 @@ if not TRAIN_FINAL:
         tagged_test = [TaggedDocument(words=(str(X).split()), tags=[str(i)]) for i, X in enumerate(X_test)]
 
         if split_index == CV_SPLITS or TRAIN_ONCE:
-            trained_model, lrc = train_model(base_model, tagged_tr, y_train, save_to_disk=SAVE_TO_DISK)
+            # The model has to be passed in directly as an argument in the skf.split iteration
+            # in order to create a new model each split. Otherwise, it will throw an error!
+            trained_model, lrc = train_model(Doc2Vec(
+                vector_size=100,
+                window=5,
+                min_count=3,
+                dm=1,
+                workers=8,
+                epochs=EPOCHS
+            ), tagged_tr, y_train, save_to_disk=SAVE_TO_DISK)
         else:
-            trained_model, lrc = train_model(base_model, tagged_tr, y_train, save_to_disk=False)
+            trained_model, lrc = train_model(Doc2Vec(
+                vector_size=100,
+                window=5,
+                min_count=3,
+                dm=1,
+                workers=8,
+                epochs=EPOCHS
+            ), tagged_tr, y_train, save_to_disk=False)
         accuracy = test_model(trained_model, lrc, tagged_test, y_test)
         accuracies.append(accuracy)
 
@@ -91,11 +98,19 @@ if not TRAIN_FINAL:
 
     print(accuracies)
     print("The mean accuracy is", np.mean(accuracies))
-    print("Please note, this is the mean accuracy on each 500 word chunk. If your document constists of more than 500 words, it is probably way better.")
+    print("Please note, this is the mean accuracy on each 500 word chunk. If your document constists of more than 500 \
+    words, it is probably way better.")
 
 else:  # TRAIN_FINAL == TRUE; no testing, the whole dataset is used for training
     X_train = t_pipeline.transform(df["content"])
     y_train = df["category"]
 
     tagged_tr = [TaggedDocument(words=(str(X).split()), tags=[str(i)]) for i, X in enumerate(X_train)]
-    train_model(base_model, tagged_tr, y_train, save_to_disk=SAVE_TO_DISK)
+    train_model(Doc2Vec(
+        vector_size=100,
+        window=5,
+        min_count=3,
+        dm=1,
+        workers=8,
+        epochs=EPOCHS
+    ), tagged_tr, y_train, save_to_disk=SAVE_TO_DISK)

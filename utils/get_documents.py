@@ -1,10 +1,15 @@
 import os
-import PyPDF2
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
-from settings import PREDICT_DIR, STORAGE_DIR, DOCUMENTS_DIR, MAX_WORDS
 import logging
+import warnings
+
+import PyPDF2
+from docx2python import docx2python
+
+from settings import PREDICT_DIR, STORAGE_DIR, DOCUMENTS_DIR, MAX_WORDS
+
+from sklearn.preprocessing import LabelEncoder
 
 
 def get_file_names(DIR):
@@ -51,19 +56,31 @@ def get_file_names(DIR):
 def get_file_content(filepath):
     """Extracts the text of every page in the PDF-file and joins them."""
     logging.debug("Extracting file content from " + filepath)
-    extracted_text = []
-    pdffileobj = open(filepath, 'rb')
-    pdfreader = PyPDF2.PdfFileReader(pdffileobj)
 
-    page_count = pdfreader.numPages
+    try:
+        filename, file_extension = os.path.splitext(filepath)
+        if str(file_extension).lower() == ".pdf":  # PDF
+            extracted_text = []
+            pdffileobj = open(filepath, 'rb')
+            pdfreader = PyPDF2.PdfFileReader(pdffileobj)
 
-    for x in range(page_count):
-        pageobj = pdfreader.getPage(x)
-        page_text = pageobj.extractText()
-        extracted_text.append(page_text)
+            page_count = pdfreader.numPages
 
-    return " ".join(extracted_text)
+            for x in range(page_count):
+                pageobj = pdfreader.getPage(x)
+                page_text = pageobj.extractText()
+                extracted_text.append(page_text)
+            return " ".join(extracted_text)
 
+        elif str(file_extension).lower() == ".docx":  # Word
+            document = docx2python(filepath)
+            return document.text
+
+        else:
+            return np.nan  # Return nan content. Row is skipped later.
+    except Exception as e:
+        warnings.warn(f"Error on file extraction {filepath}: {str(e)}")
+        return np.nan
 
 def create_training_dataframe(use_saved=True, clf: str = "doc2vec"):
     """Creates and returns pandas Dataframe build from the 'documents' directory. Contains category and prediction.
@@ -92,6 +109,7 @@ def create_training_dataframe(use_saved=True, clf: str = "doc2vec"):
 
         df["content"] = df.apply(lambda row: get_file_content(row["filepath"]), axis=1)
         df = df.drop(['filepath'], axis=1)
+        df.dropna(subset=['content'])
 
         changed = True
         while changed:
@@ -130,8 +148,9 @@ def create_prediction_dataframe(use_saved=False):
         df = pd.DataFrame(list(filenames.values())[0], columns=["filepath"])
         print(df)
         df["content"] = df.apply(lambda row: get_file_content(row["filepath"]), axis=1)
+        df.dropna(subset=['content'])
 
-        #KEEP THE FILEPATH AS PRIMARY KEY (since the content may be spread)!!
+        # KEEP THE FILEPATH AS PRIMARY KEY (since the content may be spread)!!
         changed = True
         while changed:
             changed = False
