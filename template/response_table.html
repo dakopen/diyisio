@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+  table, th, td {
+  border: solid 1px #CCC;
+}
+
+table {
+  width: 100%;
+}
+
+th, td {
+  padding: 0;
+  text-align: left;
+}
+</style>
+<body>
+<table style="width:100%">
+    <tr>
+        <th>File</th>
+        <th>Predicted Category</th>
+        <th>Confidence</th>
+    </tr>
+    {% for file, prediction in prediction.items() %}
+    <tr>
+        <td>{{ file }}</td>
+        {% for column in prediction.values() %}
+        <td>{{ column }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

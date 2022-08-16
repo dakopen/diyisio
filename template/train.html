@@ -1,0 +1,194 @@
+<style>
+    *,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, ".SFNSText-Regular", "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
+}
+
+.toggle {
+  cursor: pointer;
+  display: inline-block;
+}
+.toggle-switch-both {
+  background: #ED7D31 !important;
+
+}
+
+.toggle-switch {
+  display: inline-block;
+  background: #ccc;
+  border-radius: 16px;
+  width: 58px;
+  height: 32px;
+  position: relative;
+  vertical-align: middle;
+  transition: background 0.25s;
+}
+.toggle-switch:before, .toggle-switch:after {
+  content: "";
+}
+.toggle-switch:before {
+  display: block;
+  background: linear-gradient(to bottom, #fff 0%, #eee 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  transition: left 0.25s;
+}
+.toggle:hover .toggle-switch:before {
+  background: linear-gradient(to bottom, #fff 0%, #fff 100%);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+
+.toggle-checkbox:checked + .toggle-switch {
+  background: #ED7D31;
+}
+.toggle-checkbox:checked + .toggle-switch:before {
+  left: 30px;
+}
+
+.toggle-checkbox {
+  position: absolute;
+  visibility: hidden;
+}
+
+.toggle-label {
+  margin-left: 5px;
+  position: relative;
+  top: 2px;
+}
+ /* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 220px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -110px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+a, a:visited {
+    color: inherit;
+}
+</style>
+<a href="/train" style="text-decoration:none" ><h1>Settings</h1></a>
+<label class="toggle">
+    <span class="toggle-label">Predict Data</span>
+
+    <a style="text-decoration:none" href="/predict"><input class="toggle-checkbox" type="checkbox" checked>
+        <div class="toggle-switch toggle-switch-both"></div>
+    </a>
+    <span class="toggle-label">Train Classifier</span>
+</label>
+<br>
+<br>
+<form action="/train_submit" method="post">
+    <label class="toggle">
+        <input class="toggle-checkbox" type="checkbox" name="train_final">
+        <div class="toggle-switch"></div>
+        <span class="toggle-label">Train final</span>
+        <div class="tooltip">?!
+            <span class="tooltiptext">Activate to use all available data for training and none for testing. Overwrites "Train Once". Advised for finalizing the model before using.</span>
+        </div>
+    </label>
+    <br>
+    <br>
+    <label class="toggle">
+        <input class="toggle-checkbox" type="checkbox" checked name="train_once">
+        <div class="toggle-switch"></div>
+        <span class="toggle-label">Train once</span>
+        <div class="tooltip">?!
+            <span class="tooltiptext">Activate to just train one CV split instead of running all of them (to get better accuracy metrics).</span>
+        </div>
+    </label>
+    <br>
+    <br>
+
+    <label class="toggle">
+        <input class="toggle-checkbox" type="checkbox" checked name="save_to_disk">
+        <div class="toggle-switch"></div>
+        <span class="toggle-label">Save to disk | Custom name suffix</span>
+        <input onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" name="custom_name_suffix">
+        <div class="tooltip">?!
+            <span class="tooltiptext">Save trained model to disk. Create a custom name suffix to store multiple models (otherwise overwritten).</span>
+        </div>
+    </label>
+
+    <br>
+    <br>
+    <label class="toggle">
+        <input type="number" id="epochs" name="epochs"
+               min="1" max="1000" required>
+        <span class="toggle-label">Epochs</span>
+        <div class="tooltip">?!
+            <span class="tooltiptext">Number of iterations over the trainingsdata to create the doc2vec corpus. (Recommended: 100)</span>
+        </div>
+    </label>
+    <br>
+    <br>
+    <button type="submit" style="height:50px; width:200px; background-color:#ED7D31; border-radius:20px">{{ context.t_text }}</button>
+</form>
+
+<br>
+<hr>
+<p><em>Click "Files:" to expand</em></p>
+<details><summary><b>Files:</b></summary>
+    <em>Path: {{directory}}</em>
+
+<ul>
+{% for category, f in files.items() %}
+    <li>{{ category }}</li>
+    <ul>
+        {% for file in f %}
+        <li> {{ file }}</li>
+        {% endfor %}
+        <br>
+    </ul>
+{% endfor %}
+</ul>
+</details>

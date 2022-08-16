@@ -12,7 +12,7 @@ from settings import PREDICT_DIR, STORAGE_DIR, DOCUMENTS_DIR, MAX_WORDS
 from sklearn.preprocessing import LabelEncoder
 
 
-def get_file_names(DIR):
+def get_file_names(DIR, only_file_name=False):
     """Retrieves all filepaths for documents in the following structure:
     documents/
     ├─ class1 (e.g. manuals)/
@@ -49,7 +49,10 @@ def get_file_names(DIR):
 
             file_list[os.path.basename(os.path.normpath(folder[0]))] = []
             for filepath in folder[2]:
-                file_list[os.path.basename(os.path.normpath(folder[0]))].append(os.path.join(folder[0], filepath))
+                if not only_file_name:
+                    file_list[os.path.basename(os.path.normpath(folder[0]))].append(os.path.join(folder[0], filepath))
+                else:
+                    file_list[os.path.basename(os.path.normpath(folder[0]))].append(filepath)
     return file_list
 
 
