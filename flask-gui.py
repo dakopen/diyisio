@@ -128,6 +128,12 @@ def create_app(test_config=None):
             CUSTOM_NAME_SUFFIX = "_" + CUSTOM_NAME_SUFFIX
         os.environ["CUSTOM_NAME_SUFFIX"] = CUSTOM_NAME_SUFFIX
 
+        MODEL = request.form.get("ai_model", "")
+        if str(MODEL) == "Doc2Vec":
+            os.environ["MODEL"] = "Doc2Vec"
+        elif str(MODEL) == "Voting Classifier":
+            os.environ["MODEL"] = "Voting Classifier"
+
         Run_with_config_Thread()
 
         return redirect("/displaydata")

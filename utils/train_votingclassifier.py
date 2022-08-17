@@ -75,24 +75,37 @@ class Train_Votingclassifier():
             if SAVE_TO_DISK:
                 joblib.dump(voting_clf, os.path.join(STORAGE_DIR, f'voting_classifier{CUSTOM_NAME_SUFFIX}.pkl'))
 
+            self.accuracies = []
+
+
         elif not TRAIN_ONCE and not SAVE_TO_DISK:
             # Using the short form of the StratifiedKFold
             accuracies = cross_val_score(voting_clf, df["content"], df["category"], scoring='accuracy', cv=CV_SPLITS)
             print(statistics.mean(accuracies))
             print(accuracies)
+            self.accuracies = accuracies
 
         else:  # NOT TRAIN_FINAL AND NOT TRAIN_ONCE and SAVE_TO_DISK:
             skf = StratifiedKFold(n_splits=CV_SPLITS, shuffle=True)
             split_index = 1
+            accuracies = []
             for train_index, test_index in skf.split(df["content"], df["category"]):
                 # no need for transformation like in doc2vec since it's being transformed through the pipeline
                 X_train, X_test = df["content"][train_index], df["content"][test_index]
                 y_train, y_test = df["category"][train_index], df["category"][test_index]
 
                 voting_clf.fit(X=X_train, y=y_train)
-                print(voting_clf.score(X=X_test, y=y_test))
+                accuracy = voting_clf.score(X=X_test, y=y_test)
+                accuracies.append(accuracy)
 
                 if split_index == CV_SPLITS:  # save the last split
                     joblib.dump(voting_clf, os.path.join(STORAGE_DIR, f'voting_classifier{CUSTOM_NAME_SUFFIX}.pkl'))
                 else:
                     split_index += 1
+
+            print(statistics.mean(accuracies))
+            print(accuracies)
+            self.accuracies = accuracies
+
+    def get_training_accuracies(self):
+        return self.accuracies
