@@ -7,7 +7,7 @@ import warnings
 import PyPDF2
 from docx2python import docx2python
 
-from settings import PREDICT_DIR, STORAGE_DIR, DOCUMENTS_DIR, MAX_WORDS
+from settings import PREDICT_DIR, STORAGE_DIR, DOCUMENTS_DIR, MAX_WORDS, CUSTOM_NAME_SUFFIX
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -85,6 +85,7 @@ def get_file_content(filepath):
         warnings.warn(f"Error on file extraction {filepath}: {str(e)}")
         return np.nan
 
+
 def create_training_dataframe(use_saved=True, clf: str = "doc2vec"):
     """Creates and returns pandas Dataframe build from the 'documents' directory. Contains category and prediction.
     Content may dispense over multiple rows."""
@@ -108,7 +109,7 @@ def create_training_dataframe(use_saved=True, clf: str = "doc2vec"):
 
         df['category'] = le.transform(df['category'])  # transforms a class name to the corresponding encoded label
 
-        np.save(os.path.join(STORAGE_DIR, f'labelencoder_classes_{clf}.npy'), le.classes_)  # see source[1]
+        np.save(os.path.join(STORAGE_DIR, f'labelencoder_classes_{clf}{CUSTOM_NAME_SUFFIX}.npy'), le.classes_)  # see source[1]
 
         df["content"] = df.apply(lambda row: get_file_content(row["filepath"]), axis=1)
         df = df.drop(['filepath'], axis=1)

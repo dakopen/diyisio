@@ -128,6 +128,20 @@ a, a:visited {
 <br>
 <br>
 <form action="/train_submit" method="post">
+    <p style="display: inline;">Choose your AI model:
+        <div class="tooltip">?!
+                <span class="tooltiptext">Choose "Voting Classifier" if you have little training data (less than ~30000 words) and "Doc2Vec" if otherwise.</span>
+        </div>
+    </p>
+
+    <div style="display: inline-block; float: left; clear=none;">
+    <input type="radio" id="doc2vec" name="ai_model" value="Doc2Vec" checked="checked">
+    <label for="doc2vec">Doc2Vec</label>
+    <input type="radio" id="votingclassifier" name="ai_model" value="Voting Classifier">
+    <label for="votingclassifier">Voting Classifier</label>
+    </div>
+    <br>
+    <br>
     <label class="toggle">
         <input class="toggle-checkbox" type="checkbox" name="train_final">
         <div class="toggle-switch"></div>
@@ -163,7 +177,7 @@ a, a:visited {
     <br>
     <label class="toggle">
         <input type="number" id="epochs" name="epochs"
-               min="1" max="1000" required>
+               min="1" max="10000">
         <span class="toggle-label">Epochs</span>
         <div class="tooltip">?!
             <span class="tooltiptext">Number of iterations over the trainingsdata to create the doc2vec corpus. (Recommended: 100)</span>

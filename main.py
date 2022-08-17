@@ -5,7 +5,6 @@ from utils.train_doc2vec import Train_doc2vec
 
 class Main():
     def __init__(self):
-        print(USE_TRAINED)
         if USE_TRAINED:
             if os.path.exists(os.path.join(STORAGE_DIR, f"labelencoder_classes{CUSTOM_NAME_SUFFIX}.npy")) and \
                     os.path.exists(os.path.join(STORAGE_DIR, f"doc2vec{CUSTOM_NAME_SUFFIX}.model")) and \

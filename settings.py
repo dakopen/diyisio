@@ -49,3 +49,5 @@ SAVE_TO_DISK = (os.environ.get('SAVE_TO_DISK', 'True') == 'True')
 OUTPUT_PROBA = (os.environ.get('OUTPUT_PROBA', 'False') == 'True')  # set to True, if you're interested in the probabilities
 
 CUSTOM_NAME_SUFFIX = os.environ.get('CUSTOM_NAME_SUFFIX', '')
+
+MODEL = os.environ.get('MODEL', 'Doc2Vec')

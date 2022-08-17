@@ -3,7 +3,7 @@ import time
 import webbrowser
 import threading
 from flask import Flask, render_template, redirect, request, jsonify
-import json
+
 BASE_DIR = os.getcwd()
 DOCUMENTS_DIR = os.path.join(BASE_DIR, "documents")
 STORAGE_DIR = os.path.join(BASE_DIR, "storage")
@@ -15,6 +15,7 @@ thread_object = None
 import logging
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
+
 
 class Run_with_config_Thread(object):
     def __init__(self,):
@@ -45,6 +46,22 @@ def get_file_names(DIR, only_file_name=False):
     return file_list
 
 
+def get_available_classifiers():
+    modelslist = ([x for x in os.walk(STORAGE_DIR)])
+    available_classifiers = {"Doc2Vec": [], "Voting Classifier": []}
+    for model in modelslist[0][2]:
+        model = str(model)
+        if model.endswith(".model"):
+            model_name = model[7:-6]  # deletes doc2vec and .model from the string
+            if os.path.exists(os.path.join(STORAGE_DIR, f"labelencoder_classes_doc2vec{model_name}.npy")) and \
+                    os.path.exists(os.path.join(STORAGE_DIR, f"lrc{model_name}.pkl")):
+                available_classifiers["Doc2Vec"].append(model_name)
+        if model.startswith("voting_classifier"):
+            model_name = model[17:-4]  # deletes voting_classifier and .pkl from the string
+            if os.path.exists(os.path.join(STORAGE_DIR, f"labelencoder_classes_votingclassifier{model_name}.npy")):
+                available_classifiers["Voting Classifier"].append(model_name)
+
+    return available_classifiers
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True, template_folder="template")
@@ -72,8 +89,8 @@ def create_app(test_config=None):
     @app.route('/predict', endpoint="predict")
     def predict():
         file_names_dict = get_file_names(PREDICT_DIR, only_file_name=True)
-
-        return render_template(os.path.join("predict.html"), context={"p_text": "Predict"}, files=file_names_dict, directory=PREDICT_DIR)
+        available_classifiers = get_available_classifiers()
+        return render_template(os.path.join("predict.html"), context={"p_text": "Predict"}, files=file_names_dict, directory=PREDICT_DIR, available_classifiers=available_classifiers)
 
     @app.route('/predict_submit', methods=['POST'])
     def receive_predict_params():
@@ -81,16 +98,18 @@ def create_app(test_config=None):
         thread_object = None
         os.environ["USE_TRAINED"] = "True"
         os.environ["OUTPUT_PROBA"] = on_off_dict[request.form.get("output_probabilities", "off")]
-
-        CUSTOM_NAME_SUFFIX = str(request.form.get("custom_name_suffix", ""))
-        if CUSTOM_NAME_SUFFIX:
-            CUSTOM_NAME_SUFFIX = "_" + CUSTOM_NAME_SUFFIX
-        os.environ["CUSTOM_NAME_SUFFIX"] = CUSTOM_NAME_SUFFIX
-
+        MODEL = request.form.get("ai_model", "")
+        if str(MODEL).startswith("Doc2Vec"):
+            os.environ["MODEL"] = "Doc2Vec"
+            os.environ["CUSTOM_NAME_SUFFIX"] = str(MODEL)[8:]  # replaces Doc2Vec_
+        elif str(MODEL).startswith("Voting Classifier"):
+            os.environ["MODEL"] = "Voting Classifier"
+            os.environ["CUSTOM_NAME_SUFFIX"] = str(MODEL)[18:]  # replaces Voting Classifier_
+        else:
+            return "Please train a model first!"
         Run_with_config_Thread()
 
         return redirect("/displaydata")
-
 
     @app.route('/train_submit', methods=['POST'])
     def receive_train_params():
@@ -101,6 +120,8 @@ def create_app(test_config=None):
         os.environ["TRAIN_ONCE"] = on_off_dict[request.form.get("train_once", "off")]
         os.environ["SAVE_TO_DISK"] = on_off_dict[request.form.get("save_to_disk", "off")]
         os.environ["EPOCHS"] = request.form.get("epochs", "100")
+        if os.environ["EPOCHS"] == "":
+            os.environ["EPOCHS"] = "100"
 
         CUSTOM_NAME_SUFFIX = str(request.form.get("custom_name_suffix", ""))
         if CUSTOM_NAME_SUFFIX:
@@ -117,17 +138,20 @@ def create_app(test_config=None):
 
         return render_template(os.path.join("train.html"), context={"t_text": "Train"}, files=file_names_dict, directory=DOCUMENTS_DIR)
 
-
     @app.route('/displaydata')
     def displaydata():
         global thread_object
         if thread_object is None:
             return render_template(os.path.join("not_ready_yet.html"))
-        return render_template(os.path.join("response_table.html"), prediction=thread_object.get_prediction_dict())
-
+        try:
+            return render_template(os.path.join("response_table.html"), prediction=thread_object.get_prediction_dict())  # display Prediction results
+        except:
+            return render_template(os.path.join("Training_complete.html"))  # display "Training result is in console"
 
 
     return app
+
+
 if __name__ == "__main__":
     webbrowser.open("http://127.0.0.1:5000")
     app = create_app()

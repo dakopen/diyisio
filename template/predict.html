@@ -131,21 +131,25 @@ a, a:visited {
 <br>
 <br>
 <form action="/predict_submit" method="post">
+    <p style="display:inline;">SELECT MODEL (train first):
+        <div class="tooltip">?!
+            <span class="tooltiptext">Select pretrained model. Classifier type is in brackets, followed by (when specified) the custom name. <br> If none display, you need to train one first. </span>
+        </div>
+    </p>
+    {% for classifiertype, classifier_list in available_classifiers.items() %}
+        {% for classifier in classifier_list %}
+        <input type="radio" id="{{classifiertype}}_{{classifier}}" name="ai_model" value="{{classifiertype}}_{{classifier}}" required>
+        <label for="{{classifiertype}}_{{classifier}}">[{{classifiertype}}] {{classifier}}</label>
+        {% endfor %}
+    {% endfor %}
+    <br>
+    <br>
     <label class="toggle">
         <input class="toggle-checkbox" type="checkbox" name="output_probabilities" checked>
         <div class="toggle-switch"></div>
         <span class="toggle-label">Output probabilities</span>
         <div class="tooltip">?!
             <span class="tooltiptext">Output probabilities instead of just the best match.</span>
-        </div>
-    </label>
-    <br>
-    <br>
-    <label class="toggle">
-        <span class="toggle-label">Custom name suffix</span>
-        <input onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" name="custom_namesuffix">
-         <div class="tooltip">?!
-            <span class="tooltiptext">Load model with a custom suffix (used to store multiple version). Leave empty if unsure.</span>
         </div>
     </label>
     <br>

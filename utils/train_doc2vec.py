@@ -20,11 +20,13 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 def train_model(model: Doc2Vec, tagged_tr: list[TaggedDocument], y_train, save_to_disk=True):
     model.build_vocab(tagged_tr)
     for epoch in range(EPOCHS):
-        print(f'Training Epoch {epoch + 1}')
+        print(f'Training Epoch [{epoch + 1}/{EPOCHS}]')
         model.train(tagged_tr,
                     total_examples=model.corpus_count,
                     epochs=model.epochs)
-
+    """model.train(tagged_tr,
+                total_examples=model.corpus_count,
+                epochs=model.epochs)"""
     X_train = np.array([model.dv[str(i)] for i in range(len(tagged_tr))])
 
     lrc = LogisticRegression(C=5, multi_class='multinomial', solver='saga', max_iter=1500)
@@ -44,6 +46,7 @@ def test_model(model: Doc2Vec, lrc: LogisticRegression, tagged_test: list[Tagged
     print(classification_report(y_true=y_test, y_pred=y_pred))
     # heatconmat(y_true=y_test, y_pred=y_pred)  # activate if you're interested in a heatconmat
     return accuracy_score(y_true=y_test, y_pred=y_pred)
+
 
 class Train_doc2vec():
     def __init__(self):
@@ -100,8 +103,7 @@ class Train_doc2vec():
             print(accuracies)
             self.accuracies = accuracies
             print("The mean accuracy is", np.mean(accuracies))
-            print("Please note, this is the mean accuracy on each 500 word chunk. If your document constists of more than 500 \
-            words, it is probably way better.")
+            print("Please note, this is the mean accuracy on each 500 word chunk. If your document constists of more than 500 words, it is probably way better.")
 
         else:  # TRAIN_FINAL == TRUE; no testing, the whole dataset is used for training
             X_train = t_pipeline.transform(df["content"])
