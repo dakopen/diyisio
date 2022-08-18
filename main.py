@@ -5,7 +5,8 @@ from utils.train_doc2vec import Train_doc2vec
 from utils.predict_votingclassifier import Predict_Votingclassifier
 from utils.train_votingclassifier import Train_Votingclassifier
 
-class Main():
+
+class Main:
     def __init__(self):
 
         if MODEL == "Doc2Vec":

@@ -1,8 +1,7 @@
 import os
-import time
 import webbrowser
 import threading
-from flask import Flask, render_template, redirect, request, jsonify
+from flask import Flask, render_template, redirect, request
 
 BASE_DIR = os.getcwd()
 DOCUMENTS_DIR = os.path.join(BASE_DIR, "documents")
@@ -62,6 +61,8 @@ def get_available_classifiers():
                 available_classifiers["Voting Classifier"].append(model_name)
 
     return available_classifiers
+
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True, template_folder="template")
@@ -151,9 +152,8 @@ def create_app(test_config=None):
             return render_template(os.path.join("not_ready_yet.html"))
         try:
             return render_template(os.path.join("response_table.html"), prediction=thread_object.get_prediction_dict())  # display Prediction results
-        except:
+        except:  # thread_object has not def 'get_prediction_dict', since it was training not prediction ran
             return render_template(os.path.join("Training_complete.html"))  # display "Training result is in console"
-
 
     return app
 

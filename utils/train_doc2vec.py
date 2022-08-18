@@ -24,9 +24,7 @@ def train_model(model: Doc2Vec, tagged_tr: list[TaggedDocument], y_train, save_t
         model.train(tagged_tr,
                     total_examples=model.corpus_count,
                     epochs=model.epochs)
-    """model.train(tagged_tr,
-                total_examples=model.corpus_count,
-                epochs=model.epochs)"""
+
     X_train = np.array([model.dv[str(i)] for i in range(len(tagged_tr))])
 
     lrc = LogisticRegression(C=5, multi_class='multinomial', solver='saga', max_iter=1500)
@@ -48,7 +46,7 @@ def test_model(model: Doc2Vec, lrc: LogisticRegression, tagged_test: list[Tagged
     return accuracy_score(y_true=y_test, y_pred=y_pred)
 
 
-class Train_doc2vec():
+class Train_doc2vec:
     def __init__(self):
         df = create_training_dataframe(use_saved=False, clf="doc2vec")
 

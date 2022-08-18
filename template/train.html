@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Train Classifier</title>
+</head>
 <style>
     *,
 *:before,
@@ -115,8 +121,9 @@ body {
 a, a:visited {
     color: inherit;
 }
+
 </style>
-<a href="/train" style="text-decoration:none" ><h1>Settings</h1></a>
+<a href="/train" style="text-decoration:none"><h1>Settings</h1></a>
 <label class="toggle">
     <span class="toggle-label">Predict Data</span>
 
@@ -129,16 +136,16 @@ a, a:visited {
 <br>
 <form action="/train_submit" method="post">
     <p style="display: inline;">Choose your AI model:
-        <div class="tooltip">?!
-                <span class="tooltiptext">Choose "Voting Classifier" if you have little training data (less than ~30000 words) and "Doc2Vec" if otherwise.</span>
-        </div>
+    <div class="tooltip">?!
+        <span class="tooltiptext">Choose "Voting Classifier" if you have little training data (less than ~30000 words) and "Doc2Vec" if otherwise.</span>
+    </div>
     </p>
 
     <div style="display: inline-block; float: left; clear=none;">
-    <input type="radio" id="doc2vec" name="ai_model" value="Doc2Vec" checked="checked">
-    <label for="doc2vec">Doc2Vec</label>
-    <input type="radio" id="votingclassifier" name="ai_model" value="Voting Classifier">
-    <label for="votingclassifier">Voting Classifier</label>
+        <input type="radio" id="doc2vec" name="ai_model" value="Doc2Vec" checked="checked">
+        <label for="doc2vec">Doc2Vec</label>
+        <input type="radio" id="votingclassifier" name="ai_model" value="Voting Classifier">
+        <label for="votingclassifier">Voting Classifier</label>
     </div>
     <br>
     <br>
@@ -185,24 +192,28 @@ a, a:visited {
     </label>
     <br>
     <br>
-    <button type="submit" style="height:50px; width:200px; background-color:#ED7D31; border-radius:20px">{{ context.t_text }}</button>
+    <button type="submit" style="height:50px; width:200px; background-color:#ED7D31; border-radius:20px">{{
+        context.t_text }}
+    </button>
 </form>
 
 <br>
 <hr>
 <p><em>Click "Files:" to expand</em></p>
-<details><summary><b>Files:</b></summary>
+<details>
+    <summary><b>Files:</b></summary>
     <em>Path: {{directory}}</em>
 
-<ul>
-{% for category, f in files.items() %}
-    <li>{{ category }}</li>
     <ul>
-        {% for file in f %}
-        <li> {{ file }}</li>
+        {% for category, f in files.items() %}
+        <li>{{ category }}</li>
+        <ul>
+            {% for file in f %}
+            <li> {{ file }}</li>
+            {% endfor %}
+            <br>
+        </ul>
         {% endfor %}
-        <br>
     </ul>
-{% endfor %}
-</ul>
 </details>
+</html>

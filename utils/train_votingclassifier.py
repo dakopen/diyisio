@@ -21,7 +21,8 @@ from nltk.corpus import stopwords
 # import nltk
 # nltk.download("stopwords")
 
-class Train_Votingclassifier():
+
+class Train_Votingclassifier:
     def __init__(self):
         df = create_training_dataframe(use_saved=False, clf="votingclassifier")
 
@@ -68,7 +69,6 @@ class Train_Votingclassifier():
 
         voting_clf = Pipeline(steps=[('clf4', VotingClassifier(estimators=[("svc", text_clf), ("mnb", text_clf2), ("rfc", text_clf3)], weights=[1, 1, 1], voting="soft"))])
 
-
         if TRAIN_FINAL:
             voting_clf.fit(X=df["content"], y=df["category"])
 
@@ -76,7 +76,6 @@ class Train_Votingclassifier():
                 joblib.dump(voting_clf, os.path.join(STORAGE_DIR, f'voting_classifier{CUSTOM_NAME_SUFFIX}.pkl'))
 
             self.accuracies = []
-
 
         elif not TRAIN_ONCE and not SAVE_TO_DISK:
             # Using the short form of the StratifiedKFold
@@ -98,7 +97,7 @@ class Train_Votingclassifier():
                 accuracy = voting_clf.score(X=X_test, y=y_test)
                 accuracies.append(accuracy)
 
-                if split_index == CV_SPLITS:  # save the last split
+                if split_index == CV_SPLITS and SAVE_TO_DISK:  # save the last split
                     joblib.dump(voting_clf, os.path.join(STORAGE_DIR, f'voting_classifier{CUSTOM_NAME_SUFFIX}.pkl'))
                 else:
                     split_index += 1

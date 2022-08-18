@@ -11,7 +11,6 @@ STORAGE_DIR = os.path.join(BASE_DIR, "storage")
 PREDICT_DIR = os.path.join(BASE_DIR, "predict")
 
 
-
 def get_least_populated_category():
     folderlist = ([x for x in os.walk(DOCUMENTS_DIR)])
 

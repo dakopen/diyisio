@@ -7,7 +7,7 @@ import warnings
 import PyPDF2
 from docx2python import docx2python
 
-from settings import PREDICT_DIR, STORAGE_DIR, DOCUMENTS_DIR, MAX_WORDS, CUSTOM_NAME_SUFFIX
+from settings import PREDICT_DIR, STORAGE_DIR, DOCUMENTS_DIR, MAX_WORDS, CUSTOM_NAME_SUFFIX, SAVE_TO_DISK
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -109,7 +109,8 @@ def create_training_dataframe(use_saved=True, clf: str = "doc2vec"):
 
         df['category'] = le.transform(df['category'])  # transforms a class name to the corresponding encoded label
 
-        np.save(os.path.join(STORAGE_DIR, f'labelencoder_classes_{clf}{CUSTOM_NAME_SUFFIX}.npy'), le.classes_)  # see source[1]
+        if SAVE_TO_DISK:
+            np.save(os.path.join(STORAGE_DIR, f'labelencoder_classes_{clf}{CUSTOM_NAME_SUFFIX}.npy'), le.classes_)  # see source[1]
 
         df["content"] = df.apply(lambda row: get_file_content(row["filepath"]), axis=1)
         df = df.drop(['filepath'], axis=1)

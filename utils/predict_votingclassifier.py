@@ -31,7 +31,7 @@ class Predict_Votingclassifier():
             if OUTPUT_PROBA:
                 print(key, np.mean(value, axis=0))
             probability = np.mean(value, axis=0)
-            prediction_dict[key] = {"predicted_category": le.inverse_transform([np.argmax(probability)])[0], "probability": probability}
+            prediction_dict[key] = {"predicted_category": le.inverse_transform([np.argmax(probability)])[0], "probability": max(probability)}
 
         print(prediction_dict)
         self.prediction_dict = prediction_dict
