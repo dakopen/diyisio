@@ -167,6 +167,23 @@ So, genug von der Theorie, nun kommt die Praxis und das Training eines eigenen D
 
 **Deaktiviere "Train Once" und "Train Final" für eine zuverlässliche Aussage über die Genauigkeit eines Classifiers. Nach dem Optimieren, sollte der Classifier neu trainiert werden mit "Train Final", sodass alle verfügbaren Trainingsdaten genutzt werden.**
 
+## Trainingsdaten
+Die Trainingsdaten sind im optimalen Fall eigene Dateien (`.docx` oder `.pdf`), die Kategorien zugeordnet werden können. Falls keine eigenen Dateien genutzt werden können, habe ich für 4 Kategorien Dateien aus dem Internet gesammelt: [OneDrive](https://1drv.ms/u/s!AhrRle8s079Tk4Iy9c-WWuAyD6nfeQ?e=ClbWH5); Passwort: BWKI
+
+Da die Dateien aus dem Internet sind, übernehme ich keine Haftung für mögliche Viren, die in den Dokumenten sein könnten. Allerdings gilt das PDF-Format als recht sicher und die Dateien waren bei Google zu finden (eingebauter Virenscan).
+
+Außerdem eignen sich "Mails" gut als Kategorie fürs Training, hierfür einfach im eigenen Mailprogramm auf "print to PDF" drücken. 
+
+Aus datenschutzrechtlichen Gründen kann ich keine Trainingsdaten für jede benutzte Kategorie bereitstellen, dafür aber den Classifier:
+Die schon trainierten Classifier können Dokumente in folgende Kategorien zuverlässig einteilen:
+* Anleitungen
+* Bewerbung Motivationsschreiben und Lebenslauf
+* Briefe und Mails
+* Hausaufgaben und Arbeitsauftrag
+* Kleingedrucktes
+* Rechnungen
+* Umfragen und Ausfüllbögen
+
 ## Zukunft von diyisio
 Aufgrund der sehr vielversprechenden Ergebnisse und des alltäglichen und zugleich praktischen Anwendungsfalls von diyisio, arbeite ich aktiv an der Applikation weiter. Erste Ziele sind:
 * Support für Linux und MacOS
