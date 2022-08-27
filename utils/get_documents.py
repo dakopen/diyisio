@@ -49,10 +49,15 @@ def get_file_names(DIR, only_file_name=False):
 
             file_list[os.path.basename(os.path.normpath(folder[0]))] = []
             for filepath in folder[2]:
-                if not only_file_name:
-                    file_list[os.path.basename(os.path.normpath(folder[0]))].append(os.path.join(folder[0], filepath))
-                else:
-                    file_list[os.path.basename(os.path.normpath(folder[0]))].append(filepath)
+                filename, file_extension = os.path.splitext(str(filepath))
+                if file_extension.lower() in [".pdf", ".docx"]:
+                    if not only_file_name:
+                        file_list[os.path.basename(os.path.normpath(folder[0]))].append(os.path.join(folder[0], filepath))
+                    else:
+                        file_list[os.path.basename(os.path.normpath(folder[0]))].append(filepath)
+            if len(file_list[os.path.basename(os.path.normpath(folder[0]))]) == 0:
+                del file_list[os.path.basename(os.path.normpath(folder[0]))]
+
     return file_list
 
 

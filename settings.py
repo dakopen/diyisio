@@ -30,10 +30,9 @@ TEXT_PREPROCESSING = "lemma"  # "lemma" (recommended) for lemmatization; "stem" 
 
 MAX_WORDS = 500
 
-#CV_SPLITS = min(([int(get_least_populated_category()/2), 15]))  # set the CV_SPLITS to half of the least populated category; max: 15
-CV_SPLITS = 18  # set the CV_SPLITS to half of the least populated category; max: 15
+CV_SPLITS = min(([int(get_least_populated_category()), 20]))  # set the CV_SPLITS to half of the least populated category; max: 20
 
-if CV_SPLITS < 5:
+if CV_SPLITS < 10:
     warnings.warn("Please provide at least 10 examples per category")
 else:
     print("CV SPLITS set to", CV_SPLITS)
