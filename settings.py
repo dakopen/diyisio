@@ -34,6 +34,8 @@ CV_SPLITS = min(([int(get_least_populated_category()/2), 15]))  # set the CV_SPL
 
 if CV_SPLITS < 5:
     warnings.warn("Please provide at least 10 examples per category")
+else:
+    print("CV SPLITS set to", CV_SPLITS)
 
 EPOCHS = os.environ.get("EPOCHS", "100")  # (100 is recommended), 50 will do fine too. The EPOCHS only apply to the doc2vec training.
 EPOCHS = int(EPOCHS)

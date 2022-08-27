@@ -5,7 +5,7 @@ Dabei stellt das Tool gleich zwei Stand der Technik Klassifikatoren zur Verfügu
 Mit diyisio ist es möglich, sowohl PDFs (`.pdf`), als auch Microsoft Word (`.docx`) Dokumente zuverlässig zu klassifizieren.
 
 
-<img src="storage\diyiso logo.png" alt="diyisio Logo" width="500" style="margin: auto; display: block;"/>
+<img src="images\diyiso logo.png" alt="diyisio Logo" width="500" style="margin: auto; display: block;"/>
 
 
 ## Konzept
@@ -30,7 +30,7 @@ Bevor wir zur Installation kommen, ist es wichtig das Tool zu verstehen:
 
 ### Dateiverzeichnis
 Nicht ohne Grund hat diyisio DIY im Namen: Ein grundlegendes Ziel ist es, die Verwendung der KI so einfach und intuitiv wie möglich zu gestalten, sodass auch Nutzer:innen ohne Programmiererfahrung das Tool vom Source-Code nutzen können:
-![diyisio Dateiverzeichnis](storage/diyisio Dateiverzeichnis.png)
+![diyisio Dateiverzeichnis](images/diyisio Dateiverzeichnis.png)
 
 #### Training
 Die Klassenzuweisung findet per Windows-Ordner statt: in dem Ordner `documents` können beliebig viele Ordner erstellt werden, die die Klassennamen tragen. In diesen Unterordnern dürfen beliebig viele weitere Unterordner sein und/oder Dokumente selbst.
@@ -81,7 +81,7 @@ Hierfür muss die Datei `flask-gui.py` ausgeführt werden. Keine Angst, das wird
 
 #### Training
 
-<img alt="Flask Training" height="800" src="storage\Flask Erklärung Train.png" width="600"/>
+<img alt="Flask Training" height="400" src="images\Flask Erklärung Train.png" width="300"/>
 
 1. Die Flask Application läuft auf dem localhost (127.0.0.1)
 2. Über den (immer als aktiv gezeigten) Kippschalter, kann zwischen `Predict Data` und `Train Classifier` gewechselt werden.
@@ -94,7 +94,7 @@ Hierfür muss die Datei `flask-gui.py` ausgeführt werden. Keine Angst, das wird
 9. Zu guter letzt kann der Trainingsvorgang durch einen Klick auf "Train" gestartet werden.
 
 #### Prediction 
-<img alt="Flask Prediction" height="800" src="storage\Flask Erklärung Predict.png" width="600"/>
+<img alt="Flask Prediction" height="400" src="images\Flask Erklärung Predict.png" width="300"/>
 
 0. (Die Predict Seite ist gleich aufgebaut, es wird nicht alles doppelt erläutert)
 1. Hier kann, falls schon trainiert, ein Modell ausgewählt werden. Ist eins mit einem Custom name suffix trainiert worden, erscheint dieser nach dem Classifier z.B.: `[Doc2Vec] Name`.
@@ -138,4 +138,62 @@ Genauigkeiten der Klassifikatoren je nach Dokumentenlänge mit den oben beschrie
 
 
 ## Installation
-So, genug von der langweiligen Theorie, nun kommt die Praxis und das Training eines eigenen Dokumentklassifikators:
+So, genug von der Theorie, nun kommt die Praxis und das Training eines eigenen Dokumentklassifikators:
+
+### Systemanforderungen
+* Windows (11 getestet, sollte auf 10 genauso funktionieren), für Linux und MacOS müsste die Extrahierung und das Ordnersystem umgeschrieben werden.
+* Python Version: `3.10` (auf älteren Versionen ungetestet)
+* Speicher: Alleine die Dependencies benötigen ca. 1 GB Speicher (aufgrund des SpaCy lemmatization Datensatzes; kann um 500mb reduziert werden, indem `de_core_news_lg` aus `requirements.txt` genommen wird und der Code angepasst wird (siehe Kommentar in `utils/preprocessing.py`).
+* Sonstige Anforderungen:
+  * Eine möglichst neue CPU wird empfohlen, da darauf die KI trainiert wird. Es ist derzeit nicht möglich (und da das Training schnell geht auch nicht erforderlich), das Modell auf einer Grafikkarte zu trainieren. 
+
+### Installation Step-by-Step
+1. [Git **l**arge **f**ile **s**torage](https://git-lfs.github.com/) installieren (und `git lfs install` ausführen, wie in der Anleitung beschrieben). Git lfs wird verwendet, um die AI-Modelle auf GitHub zu laden, ohne ihre Versionsgeschichte mitzuspeichern.
+2. Projekt klonen
+3. Dependencies installieren (Befehl `pip install -r requirements.txt` ausführen). Sollte word-stemming (nltk SnowballStemmer) statt der empfohlenen lemmatization gewünscht sein, muss diese im Code einmal installiert werden über den zugehörigen `nltk.download()` Befehl. Dazu einmal den Code in der Fehlermeldung ausführen.
+4. `flask-gui.py` starten. Bei erfolgreicher Installation sollte sich eine lokale Webseite öffnen.
+5. Ordner `Documents` mit Ordnern für Klassen und `.pdf` oder `.docx` Dateien als Trainingsdaten füllen. Siehe `#Dateiverzeichnis` im README.
+6. Flask Webseite neu laden und verifizieren, dass die Dateien gefunden wurden (mit eigenen Dateien und Labels): 
+<img src="images\File Anzeige.png" alt="File Anzeige" width="500" style="margin: auto; display: block;"/>
+7. Parameter (ggf. in `settings.py`) einstellen und das Training starten.
+8. Nach dem Training wird der Classifier, Labelencodings und das Dataframe der Trainingsdaten in `storage/settings.py` gespeichert. Sollten die Trainingsdaten nicht verändert werden, müssen sie nicht erneut geladen werden:
+   1. In `utils/train_doc2vec.py` bzw. `utils/train_votingclassifier` befindet sich eine Zeile `df = create_training_dataframe(use_saved=False ...`.
+   2. Hier muss `use_saved` auf `True` gesetzt werden, damit die Trainingsdaten vom Dataframe geladen werden.
+   3. Dies spart erheblich an Zeit, da die Trainingsdaten nicht jedes Mal erneut geladen werden müssen.
+   4. **ACHTUNG:** Das Trainingsdataframe (und Predictiondataframe) wird unabhängig vom custom name suffix, oder Classifier immer unter dem gleichen Namen (`storage/training_dataframe.pkl` bzw. `storage/prediction_dataframe.pkl`) gespeichert.
+9. Der trainierte Classifier ist nun einsatzbereit. Siehe `#Prediction` im README.
+10. Bei Fragen bitte einfach ein GitHub-Issue schreiben, ich versuche mich möglichst schnell darum zu kümmern. Alternativ per Mail an mich (Daniel Busch): dakopen185@gmail.com.
+
+
+**Deaktiviere "Train Once" und "Train Final" für eine zuverlässliche Aussage über die Genauigkeit eines Classifiers. Nach dem Optimieren, sollte der Classifier neu trainiert werden mit "Train Final", sodass alle verfügbaren Trainingsdaten genutzt werden.**
+
+## Zukunft von diyisio
+Aufgrund der sehr vielversprechenden Ergebnisse und des alltäglichen und zugleich praktischen Anwendungsfalls von diyisio, arbeite ich aktiv an der Applikation weiter. Erste Ziele sind:
+* Support für Linux und MacOS
+* Desktop Applikation, die noch übersichtlicher gestaltet ist
+* Weitere unterstützte Dateitypen, insbesondere PowerPoints (`.pptx`) und Textdateien (`.txt`).
+
+**Da ich früh den weit wirkenden Nutzen abschätzen konnte und der Code quelloffen bleiben soll, habe ich den Code ausschließlich auf Englisch verfasst und kommentiert.**
+
+Außerdem wurde auf ein (auf die Sprache Deutsch) vortrainiertes BERT (weiterentwicklung von Doc2Vec) Modell, wie [das des MDZ Digital Library team](https://huggingface.co/dbmdz/bert-base-german-uncased) bewusst verzichtet. Dies hat zwei Gründe:
+* einerseits ist dieses Modell, trotz der erwarteten Verbesserungen der Genauigkeit, für den Wettbewerb ungeeignet, da weniger eigene Programmierkunst dahintersteht. Denn durch eine vortrainierte Version wäre ein zweiter Classifier (in diesem Falle der `Votingclassifier`) redundant, da das Modell auch auf wenigen Trainigsdaten zuverlässig trainiert werden kann.
+* andererseits arbeite ich zurzeit auf meiner Arbeit an einer solchen Implementation (für eine Klassifikation einzelner Sätze). Daher hätte ich zwar schon Erfahrung mit dem Modell, aber das trifft auch den Grund des Wettbewerbs nicht, da durch den Wettbewerb etwas Neues gelernt und angewandt werden soll (hier `Doc2Vec` sowie der auf der Dokumentation von sklearn basierenden `Votingclassifier`).
+
+### Reale Anwendung
+Während zurzeit aus Demozwecken die vorhergesagte Kategorie einer Datei nur angezeigt wird, wird in der Praxis ein sogenannter "Tag" bzw. "Markierung" in die Datei geschrieben, über den die Datei bei der Suche in Sekunden gefunden wird.
+
+Für das Schreiben der sog. "Markierung" von Microsoft Office Dateien und anderen Datein mit Tags, kann die Windows-Schnittstelle verwendet werden. Dafür wird diese [Stackoverflow Anwort](https://stackoverflow.com/questions/61713787/reading-and-writing-windows-tags-with-python-3) verwendet. Allerdings hat der Dateityp `.pdf` keine Tags, sondern Keywords, daher muss hierfür eine anderer [Code snippet](https://organicweb.com.au/general/pdf-properties/) verwendet werden.
+
+Für die MacOS Implementation kann ein weiteres [Python Package](https://pypi.org/project/pytaggit/) verwendet werden.
+
+## Quellen:
+Die Quellen für Code-Snippets oder Teile aus Tutorials sind an entsprechender Stelle gekennzeichnet (z.B. `# see source[0]`). Sie beziehen sich auf den nachfolgenden Code Abschnitt (durch Absätze gegliedert). Die Quellen befinden sich dann in der Datei `sources.txt`.
+
+Folgendes Buch wurde als Grundlage für maschinelle Textverarbeitung und -klassifikation gelesen:
+> Raschka, S. (2016). Python machine learning: Unlock deeper insights into machine learning with this vital guide to cutting-edge predictive analytics. Packt Publishing. 
+
+
+Allgemein wurden folgende Machine Learning Modelle verwendet:
+> [sklearn](https://scikit-learn.org/)<br>Scikit-learn: Machine Learning in Python, Pedregosa et al., JMLR 12, pp. 2825-2830, 2011.
+
+> [Gensim's Doc2Vec](https://radimrehurek.com/gensim/models/doc2vec.html)<br>Rehurek, R., & Sojka, P. (2011). Gensim–python framework for vector space modelling. NLP Centre, Faculty of Informatics, Masaryk University, Brno, Czech Republic, 3(2).

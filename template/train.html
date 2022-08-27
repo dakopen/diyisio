@@ -174,7 +174,7 @@ a, a:visited {
         <input class="toggle-checkbox" type="checkbox" checked name="save_to_disk">
         <div class="toggle-switch"></div>
         <span class="toggle-label">Save to disk | Custom name suffix</span>
-        <input onkeydown="return /[a-zA-Z0-9]/i.test(event.key)" name="custom_name_suffix">
+        <input onkeydown="return /[a-zA-Z0-9_]/i.test(event.key)" name="custom_name_suffix">
         <div class="tooltip">?!
             <span class="tooltiptext">Save trained model to disk. Create a custom name suffix to store multiple models (otherwise overwritten).</span>
         </div>

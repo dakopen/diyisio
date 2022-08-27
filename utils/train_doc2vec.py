@@ -81,6 +81,7 @@ class Train_doc2vec:
                         workers=8,
                         epochs=EPOCHS
                     ), tagged_tr, y_train, save_to_disk=SAVE_TO_DISK)
+
                 else:
                     trained_model, lrc = train_model(Doc2Vec(
                         vector_size=100,
