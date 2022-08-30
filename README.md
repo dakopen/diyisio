@@ -156,6 +156,7 @@ So, genug von der Theorie, nun kommt die Praxis und das Training eines eigenen D
 6. Wenn der Votingclassifier verwendet wird, muss der kommentierte Part nach den Imports in `utils/train_votingclassifier.py` beim ersten Durchlauf entkommentiert werden, um NLTK stopwords herunterzuladen.
 7. Flask Webseite neu laden und verifizieren, dass die Dateien gefunden wurden (mit eigenen Dateien und Labels): 
 <img src="images\File Anzeige.png" alt="File Anzeige" width="500" style="margin: auto; display: block;"/>
+
 8. Parameter (ggf. in `settings.py`) einstellen und das Training starten.
 9. Nach dem Training wird der Classifier, Labelencodings und das Dataframe der Trainingsdaten in `storage/settings.py` gespeichert. Sollten die Trainingsdaten nicht verändert werden, müssen sie nicht erneut geladen werden:
    1. In `utils/train_doc2vec.py` bzw. `utils/train_votingclassifier` befindet sich eine Zeile `df = create_training_dataframe(use_saved=False ...`.
