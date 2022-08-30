@@ -12,25 +12,26 @@ Mit diyisio ist es möglich, sowohl PDFs (`.pdf`), als auch Microsoft Word (`.do
 Bevor wir zur Installation kommen, ist es wichtig das Tool zu verstehen:
 
 ### Klassifikatoren
-> Welche Klassifikatoren gibt es, warum und worin unterscheiden sie sich?
-> > Zur Auswahl stehen:
-> > * Voting Classifier (inkl. Support-Vector-Classification, Naive Bayers Classifier & ein Random Forest Classifier)
-> > * Doc2Vec (beruht auf Google's Word2Vec, das Wörter mit Kontext als Vektoren darstellen kann)
+Welche Klassifikatoren gibt es, warum und worin unterscheiden sie sich?
+> Zur Auswahl stehen:
+> * Voting Classifier (inkl. Support-Vector-Classification, Naive Bayers Classifier & ein Random Forest Classifier)
+> * Doc2Vec (beruht auf Google's Word2Vec, das Wörter mit Kontext als Vektoren darstellen kann)
 
-> > Während der Voting Classifier bei wenigen Trainingsdaten (weniger als ~30 000 Wörter) sehr gut abschneidet, wird Doc2Vec mit jedem Wort besser und überholt den Voting Classifier.
+> Während der Voting Classifier bei wenigen Trainingsdaten (weniger als ~30 000 Wörter) sehr gut abschneidet, wird Doc2Vec mit jedem Wort besser und überholt den Voting Classifier.
 
-> > Daher sind beide Klassifikatoren essenziell für eine flexible Anwendung, die für variable Anzahl an Trainingsdaten verwendet werden kann.
+> Daher sind beide Klassifikatoren essenziell für eine flexible Anwendung, die für variable Anzahl an Trainingsdaten verwendet werden kann.
 
-> > Auf technischer Ebene unterscheiden sich die beiden Klassifikatoren stark: Während die Klassifikatoren des Voting Classifiers (beruhend auf dem Prinzip Teamwork makes the Dreamwork
-> > die unterschiedlichen Klassifikatoren gleichen jeweils ihre individuellen Schwächen aus) nur die Wortanzahl (bzw. durch N-grams kleine Satzschnipsel) zählen, ist der Ansatz von Doc2Vec komplexer.
-> > Doc2Vec nutzt die Trainingsdaten (kann übrigens auch mit anderen Daten trainiert werden, um die Sprache zu "lernen"), um die Wörter im Kontext als Vektoren darzustellen. Durch den Kontext versteht
-> > Doc2Vec die Bedeutung und eventuelle Attribute (weiblich/männlich, Plural, Komparation) des Wortes besser. Aus dem Dokument (bzw. wie später erklärt wird: aus den Dokumentabschnitten) wird ein Vektor
-> > erzeugt, der über Logicistic Regression (LRC) einfach klassifiziert werden kann.
+> Auf technischer Ebene unterscheiden sich die beiden Klassifikatoren stark: Während die Klassifikatoren des Voting Classifiers (beruhend auf dem Prinzip Teamwork makes the Dreamwork
+> die unterschiedlichen Klassifikatoren gleichen jeweils ihre individuellen Schwächen aus) nur die Wortanzahl (bzw. durch N-grams kleine Satzschnipsel) zählen, ist der Ansatz von Doc2Vec komplexer.
+> Doc2Vec nutzt die Trainingsdaten (kann übrigens auch mit anderen Daten trainiert werden, um die Sprache zu "lernen"), um die Wörter im Kontext als Vektoren darzustellen. Durch den Kontext versteht
+> Doc2Vec die Bedeutung und eventuelle Attribute (weiblich/männlich, Plural, Komparation) des Wortes besser. Aus dem Dokument (bzw. wie später erklärt wird: aus den Dokumentabschnitten) wird ein Vektor
+> erzeugt, der über Logicistic Regression (LRC) einfach klassifiziert werden kann.
 
 
 ### Dateiverzeichnis
 Nicht ohne Grund hat diyisio DIY im Namen: Ein grundlegendes Ziel ist es, die Verwendung der KI so einfach und intuitiv wie möglich zu gestalten, sodass auch Nutzer:innen ohne Programmiererfahrung das Tool vom Source-Code nutzen können:
-![diyisio Dateiverzeichnis](images/diyisio Dateiverzeichnis.png)
+<img alt="diyisio Dateiverzeichnis" src="images/diyisio Dateiverzeichnis.png"/>
+
 
 #### Training
 Die Klassenzuweisung findet per Windows-Ordner statt: in dem Ordner `documents` können beliebig viele Ordner erstellt werden, die die Klassennamen tragen. In diesen Unterordnern dürfen beliebig viele weitere Unterordner sein und/oder Dokumente selbst.
