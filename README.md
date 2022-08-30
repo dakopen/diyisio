@@ -189,6 +189,9 @@ Die schon trainierten Classifier können Dokumente in folgende Kategorien zuverl
 
 **Deine Trainingsdaten bleiben auf Deinem Computer gespeichert und werden nirgendwo hingesendet, sondern ausschließlich lokal analysiert.**
 
+## Mögliche Fehlerquellen:
+Da der Text der Dokumente extrahiert wird (und nicht über OCR abgefragt wird), muss das Dokument über ein Text-Layer verfügen. In der Regel tun dies alle Dokumente, es gibt aber vereinzelt Ausnahmen. Gescannte Dokumente verfügen leider nicht über ein Text-Layer, daher können diese **nicht** klassifiziert werden.
+
 ## Zukunft von diyisio
 Aufgrund der sehr vielversprechenden Ergebnisse und des alltäglichen und zugleich praktischen Anwendungsfalls von diyisio, arbeite ich aktiv an der Applikation weiter. Erste Ziele sind:
 * Support für Linux und MacOS
