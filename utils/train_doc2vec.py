@@ -97,6 +97,7 @@ class Train_doc2vec:
                 if TRAIN_ONCE:
                     break
 
+                print(f"[{split_index}/{CV_SPLITS}]: {accuracy}")
                 split_index += 1
 
             print(accuracies)

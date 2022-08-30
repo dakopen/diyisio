@@ -152,7 +152,7 @@ def create_app(test_config=None):
             return render_template(os.path.join("not_ready_yet.html"))
         try:
             return render_template(os.path.join("response_table.html"), prediction=thread_object.get_prediction_dict())  # display Prediction results
-        except:  # thread_object has not def 'get_prediction_dict', since it was training not prediction ran
+        except:  # thread_object has not def 'get_prediction_dict', since it was training not predicting
             return render_template(os.path.join("Training_complete.html"))  # display "Training result is in console"
 
     return app

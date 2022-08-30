@@ -156,7 +156,7 @@ def create_prediction_dataframe(use_saved=False):
     except FileNotFoundError:
         filenames = get_file_names(PREDICT_DIR)
         df = pd.DataFrame(list(filenames.values())[0], columns=["filepath"])
-        print(df)
+
         df["content"] = df.apply(lambda row: get_file_content(row["filepath"]), axis=1)
         df.dropna(subset=['content'])
 

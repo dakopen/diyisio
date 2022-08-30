@@ -30,17 +30,9 @@ TEXT_PREPROCESSING = "lemma"  # "lemma" (recommended) for lemmatization; "stem" 
 
 MAX_WORDS = 500
 
-CV_SPLITS = min(([int(get_least_populated_category()), 20]))  # set the CV_SPLITS to half of the least populated category; max: 20
-
-if CV_SPLITS < 10:
-    warnings.warn("Please provide at least 10 examples per category")
-else:
-    print("CV SPLITS set to", CV_SPLITS)
-
 EPOCHS = os.environ.get("EPOCHS", "100")  # (100 is recommended), 50 will do fine too. The EPOCHS only apply to the doc2vec training.
 EPOCHS = int(EPOCHS)
 USE_TRAINED = (os.environ.get('USE_TRAINED', 'False') == 'True')
-
 
 TRAIN_FINAL = (os.environ.get('TRAIN_FINAL', 'False') == 'True')
 TRAIN_ONCE = (os.environ.get('TRAIN_ONCE', 'False') == 'True')
@@ -52,3 +44,16 @@ OUTPUT_PROBA = (os.environ.get('OUTPUT_PROBA', 'False') == 'True')  # set to Tru
 CUSTOM_NAME_SUFFIX = os.environ.get('CUSTOM_NAME_SUFFIX', '')
 
 MODEL = os.environ.get('MODEL', 'Doc2Vec')
+
+
+if not TRAIN_FINAL and not USE_TRAINED:
+    CV_SPLITS = min(([int(get_least_populated_category()/2), 15]))  # set the CV_SPLITS to half of the least populated category; max: 15
+
+    if CV_SPLITS < 5:
+        warnings.warn("Please provide at least 10 examples per category")
+
+    else:
+        print("CV SPLITS set to", CV_SPLITS)
+
+else:
+    CV_SPLITS = -1  # not used

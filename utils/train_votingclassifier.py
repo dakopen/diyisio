@@ -76,6 +76,7 @@ class Train_Votingclassifier:
                 joblib.dump(voting_clf, os.path.join(STORAGE_DIR, f'voting_classifier{CUSTOM_NAME_SUFFIX}.pkl'))
 
             self.accuracies = []
+            print("Training complete")
 
         elif not TRAIN_ONCE and not SAVE_TO_DISK:
             # Using the short form of the StratifiedKFold
@@ -84,7 +85,8 @@ class Train_Votingclassifier:
             print(accuracies)
             self.accuracies = accuracies
 
-        else:  # NOT TRAIN_FINAL AND NOT TRAIN_ONCE and SAVE_TO_DISK:
+
+        else:  # NOT TRAIN_FINAL and SAVE_TO_DISK:
             skf = StratifiedKFold(n_splits=CV_SPLITS, shuffle=True)
             split_index = 1
             accuracies = []
@@ -97,13 +99,19 @@ class Train_Votingclassifier:
                 accuracy = voting_clf.score(X=X_test, y=y_test)
                 accuracies.append(accuracy)
 
+                if TRAIN_ONCE:
+                    joblib.dump(voting_clf, os.path.join(STORAGE_DIR, f'voting_classifier{CUSTOM_NAME_SUFFIX}.pkl'))
+                    break
+
+                print(f"[{split_index}/{CV_SPLITS}] Accuracy: {accuracy}")
                 if split_index == CV_SPLITS and SAVE_TO_DISK:  # save the last split
                     joblib.dump(voting_clf, os.path.join(STORAGE_DIR, f'voting_classifier{CUSTOM_NAME_SUFFIX}.pkl'))
                 else:
                     split_index += 1
 
-            print(statistics.mean(accuracies))
             print(accuracies)
+            print("The mean accuracy is", statistics.mean(accuracies))
+            print("Please note, this is the mean accuracy on each 500 word chunk. If your document constists of more than 500 words, it is probably way better.")
             self.accuracies = accuracies
 
     def get_training_accuracies(self):

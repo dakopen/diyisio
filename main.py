@@ -27,8 +27,7 @@ class Main:
             if USE_TRAINED:
                 # Double check that they all exist
                 if os.path.exists(os.path.join(STORAGE_DIR, f"labelencoder_classes_votingclassifier{CUSTOM_NAME_SUFFIX}.npy")) and \
-                        os.path.exists(os.path.join(STORAGE_DIR, f"doc2vec{CUSTOM_NAME_SUFFIX}.model")) and \
-                        os.path.exists(os.path.join(STORAGE_DIR, f"lrc{CUSTOM_NAME_SUFFIX}.pkl")):
+                        os.path.exists(os.path.join(STORAGE_DIR, f"voting_classifier{CUSTOM_NAME_SUFFIX}.pkl")):
                     print("Start prediction...")
                     self.prediction = Predict_Votingclassifier()
 

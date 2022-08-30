@@ -2,7 +2,7 @@
 Mit diyisio, gesprochen di-ei-weisio (ˌdiː aɪ ˈwaɪ zi̯o), ist es einfacher als je zuvor möglich, einen auf die eigenen Anforderungen abgestimmten Dokumentklassifikator zu trainieren und benutzen.
 Dabei stellt das Tool gleich zwei Stand der Technik Klassifikatoren zur Verfügung, welche unglaublich gute Ergebnisse erzielen (nahe 100%).
 
-Mit diyisio ist es möglich, sowohl PDFs (`.pdf`), als auch Microsoft Word (`.docx`) Dokumente zuverlässig zu klassifizieren.
+Mit diyisio ist es möglich, sowohl PDFs (`.pdf`), als auch Microsoft Word (`.docx`) Dokumente zuverlässig zu klassifizieren. diyisio ist der erste Dokument-Klassifikator, der für Laien entwickelt wurde.
 
 
 <img src="images\diyiso logo.png" alt="diyisio Logo" width="500" style="margin: auto; display: block;"/>
@@ -131,10 +131,10 @@ Bei 7 Klassen trainiert mit jeweils 20-30 Dokumenten à ~400-1500 Wörtern (100 
 
 | Klassifikator     | 500 Wörter | 1000 Wörter | 1500 Wörter | 2000 Wörter |
 |-------------------|------------|-------------|-------------|-------------|
-| Doc2Vec           | ~97,5%     | ~99,93%     | ~99,998%    | ~99,9999%   |
-| Voting Classifier | ~90,4%     | ~99,07%     | ~99,912%    | ~99,9915%   |
+| Doc2Vec           | ~94,1%     | ~99,65%     | ~99,98%     | ~99,999%    |
+| Voting Classifier | ~90,8%     | ~99,15%     | ~99,92%     | ~99,993%    |
 
-Genauigkeiten der Klassifikatoren je nach Dokumentenlänge mit den oben beschriebenen Trainingsbedingungen trainiert. Bei einem Dokument von mindestens 2000 Wörtern liegt die Wahrscheinlichkeit für eine Fehlklassifikation bei ~1:1 Million.
+Genauigkeiten der Klassifikatoren je nach Dokumentenlänge mit den oben beschriebenen Trainingsbedingungen trainiert. Bei einem Dokument von mindestens 2000 Wörtern liegt die Wahrscheinlichkeit für eine Fehlklassifikation bei ~1:100 000.
 
 
 ## Installation
@@ -153,16 +153,17 @@ So, genug von der Theorie, nun kommt die Praxis und das Training eines eigenen D
 3. Dependencies installieren (Befehl `pip install -r requirements.txt` ausführen). Sollte word-stemming (nltk SnowballStemmer) statt der empfohlenen lemmatization gewünscht sein, muss diese im Code einmal installiert werden über den zugehörigen `nltk.download()` Befehl. Dazu einmal den Code in der Fehlermeldung ausführen.
 4. `flask-gui.py` starten. Bei erfolgreicher Installation sollte sich eine lokale Webseite öffnen.
 5. Ordner `Documents` mit Ordnern für Klassen und `.pdf` oder `.docx` Dateien als Trainingsdaten füllen. Siehe `#Dateiverzeichnis` im README.
-6. Flask Webseite neu laden und verifizieren, dass die Dateien gefunden wurden (mit eigenen Dateien und Labels): 
+6. Wenn der Votingclassifier verwendet wird, muss der kommentierte Part nach den Imports in `utils/train_votingclassifier.py` beim ersten Durchlauf entkommentiert werden, um NLTK stopwords herunterzuladen.
+7. Flask Webseite neu laden und verifizieren, dass die Dateien gefunden wurden (mit eigenen Dateien und Labels): 
 <img src="images\File Anzeige.png" alt="File Anzeige" width="500" style="margin: auto; display: block;"/>
-7. Parameter (ggf. in `settings.py`) einstellen und das Training starten.
-8. Nach dem Training wird der Classifier, Labelencodings und das Dataframe der Trainingsdaten in `storage/settings.py` gespeichert. Sollten die Trainingsdaten nicht verändert werden, müssen sie nicht erneut geladen werden:
+8. Parameter (ggf. in `settings.py`) einstellen und das Training starten.
+9. Nach dem Training wird der Classifier, Labelencodings und das Dataframe der Trainingsdaten in `storage/settings.py` gespeichert. Sollten die Trainingsdaten nicht verändert werden, müssen sie nicht erneut geladen werden:
    1. In `utils/train_doc2vec.py` bzw. `utils/train_votingclassifier` befindet sich eine Zeile `df = create_training_dataframe(use_saved=False ...`.
    2. Hier muss `use_saved` auf `True` gesetzt werden, damit die Trainingsdaten vom Dataframe geladen werden.
    3. Dies spart erheblich an Zeit, da die Trainingsdaten nicht jedes Mal erneut geladen werden müssen.
    4. **ACHTUNG:** Das Trainingsdataframe (und Predictiondataframe) wird unabhängig vom custom name suffix, oder Classifier immer unter dem gleichen Namen (`storage/training_dataframe.pkl` bzw. `storage/prediction_dataframe.pkl`) gespeichert.
-9. Der trainierte Classifier ist nun einsatzbereit. Siehe `#Prediction` im README.
-10. Bei Fragen bitte einfach ein GitHub-Issue schreiben, ich versuche mich möglichst schnell darum zu kümmern. Alternativ per Mail an mich (Daniel Busch): dakopen185@gmail.com.
+10. Der trainierte Classifier ist nun einsatzbereit. Siehe `#Prediction` im README.
+11. Bei Fragen bitte einfach ein GitHub-Issue schreiben, ich versuche mich möglichst schnell darum zu kümmern. Alternativ per Mail an mich (Daniel Busch): dakopen185@gmail.com.
 
 
 **Deaktiviere "Train Once" und "Train Final" für eine zuverlässliche Aussage über die Genauigkeit eines Classifiers. Nach dem Optimieren, sollte der Classifier neu trainiert werden mit "Train Final", sodass alle verfügbaren Trainingsdaten genutzt werden.**
@@ -184,15 +185,17 @@ Die schon trainierten Classifier können Dokumente in folgende Kategorien zuverl
 * Rechnungen
 * Umfragen und Ausfüllbögen
 
+**Deine Trainingsdaten bleiben auf Deinem Computer gespeichert und werden nirgendwo hingesendet, sondern ausschließlich lokal analysiert.**
+
 ## Zukunft von diyisio
 Aufgrund der sehr vielversprechenden Ergebnisse und des alltäglichen und zugleich praktischen Anwendungsfalls von diyisio, arbeite ich aktiv an der Applikation weiter. Erste Ziele sind:
 * Support für Linux und MacOS
 * Desktop Applikation, die noch übersichtlicher gestaltet ist
 * Weitere unterstützte Dateitypen, insbesondere PowerPoints (`.pptx`) und Textdateien (`.txt`).
 
-**Da ich früh den weit wirkenden Nutzen abschätzen konnte und der Code quelloffen bleiben soll, habe ich den Code ausschließlich auf Englisch verfasst und kommentiert.**
+**Da ich das Projekt weiterentwickeln möchte und Code-Snippets anderen bei ihren Projekten (z.B. die Datei-zu-Kategorie Funktion) helfen kann, habe ich den Code und die Kommentare auf Englisch verfasst.**
 
-Außerdem wurde auf ein (auf die Sprache Deutsch) vortrainiertes BERT (weiterentwicklung von Doc2Vec) Modell, wie [das des MDZ Digital Library team](https://huggingface.co/dbmdz/bert-base-german-uncased) bewusst verzichtet. Dies hat zwei Gründe:
+Außerdem wurde auf ein (auf die Sprache Deutsch) vortrainiertes [BERT](https://en.wikipedia.org/wiki/BERT_(language_model)) (weiterentwicklung von Doc2Vec) Modell, wie [das des MDZ Digital Library team](https://huggingface.co/dbmdz/bert-base-german-uncased) bewusst verzichtet. Dies hat zwei Gründe:
 * einerseits ist dieses Modell, trotz der erwarteten Verbesserungen der Genauigkeit, für den Wettbewerb ungeeignet, da weniger eigene Programmierkunst dahintersteht. Denn durch eine vortrainierte Version wäre ein zweiter Classifier (in diesem Falle der `Votingclassifier`) redundant, da das Modell auch auf wenigen Trainigsdaten zuverlässig trainiert werden kann.
 * andererseits arbeite ich zurzeit auf meiner Arbeit an einer solchen Implementation (für eine Klassifikation einzelner Sätze). Daher hätte ich zwar schon Erfahrung mit dem Modell, aber das trifft auch den Grund des Wettbewerbs nicht, da durch den Wettbewerb etwas Neues gelernt und angewandt werden soll (hier `Doc2Vec` sowie der auf der Dokumentation von sklearn basierenden `Votingclassifier`).
 
@@ -214,3 +217,20 @@ Allgemein wurden folgende Machine Learning Modelle verwendet:
 > [sklearn](https://scikit-learn.org/)<br>Scikit-learn: Machine Learning in Python, Pedregosa et al., JMLR 12, pp. 2825-2830, 2011.
 
 > [Gensim's Doc2Vec](https://radimrehurek.com/gensim/models/doc2vec.html)<br>Rehurek, R., & Sojka, P. (2011). Gensim–python framework for vector space modelling. NLP Centre, Faculty of Informatics, Masaryk University, Brno, Czech Republic, 3(2).
+
+
+## Vergleichbare Produkte
+Dokumentenklassifikation ist kein neues Gebiet. Dementsprechend viel Forschung wurde betrieben und Classifier entwickelt. So gibt es ganze [Repositories](https://github.com/kk7nc/Text_Classification) mit Funktionen und Klassen, die für die Klassifikation geschrieben sind.
+Auf den ersten Blick zu diyisio ist der [Amazon Comprehend Custom Classifier](https://docs.aws.amazon.com/comprehend/latest/dg/how-document-classification.html), mit welchem ein eigener Classifier trainiert werden kann. Konkret unterscheidet sich dieser Classifier von diyisio in folgenden Punkten:
+* Schlichtheit: Amazon Comprehend ist nicht für den Otto-Normalverbraucher konzipiert. Es wird ein AWS-Konto vorausgesetzt, die eigenständige Aufbereitung der Daten (in CSV Dateien) und etwas Programmierkenntnisse. diyisio kann jeder einfach verwenden, da es über die selbsterklärende Drag-and-Drop Funktionalität verfügt sowie ein übersichtliches Web-Settings-Framework.
+* Qualität: Metriken eines Amazon Comprehend Custom Classifiers, der auf einen (frei verfügbaren) Forschungsdatensatz trainiert wurde, konnte ich leider nicht finden. Allerdings wurden in diesem [AWS Blogartikel](https://aws.amazon.com/de/blogs/machine-learning/building-a-custom-classifier-using-amazon-comprehend/) eine Genauigkeit von 71% auf den [Yahoo! Answers](https://github.com/fastai/dlcert2/blob/master/docs/datasets.md) Datensatz gemessen (1000 training samples per category; 10 categories). Auch wenn diyisio **nicht** auf kurze Fragen und Anworten (in englischer Sprache) ausgelegt ist, habe ich den Doc2Vec auf gleichviele Daten (wie im Blogpost) trainiert und eine Genaugikeit von 0.51 erhalten. Das bedeutet, dass diyisio selbst mit **unzweckmäßigen Trainingsbedingungen** knapp an den Industriestandard (~27% drunter) rankommt.
+* Kosten: Einen eigenen Classifier über Amazon Comprehend zu trainieren ist recht [kostenspielig](https://aws.amazon.com/de/comprehend/pricing/), da dieser Rechenzeit beansprucht. Es gibt **kein** kostenloses Kontingent. diyisio ist und bleibt für immer kostenlos, es wird auf der eigenen CPU trainiert.
+* Funktionalität: Amazon Comprehend akzeptiert über "normale" Word- und PDF-Dokumente auch gescannte PDF-Dateien, welche in diyisio **nicht** klassifiziert werden können. Eine solche OCR-Implementation ist für diyisio geplant.
+* Datenschutz: Während bei Amazon Comprehend Dokumente an Amazon gesendet werden, arbeitet diyisio lokal. Amazon hat dafür den "Cloud-Vorteil", der Classifier kann von überall aus verwendet werden und reagiert sehr schnell.
+Ich kann nicht über die Unterschiede der Classifier urteilen, da Amazon Comprehend den Quellcode geheim hält. Allerdings lässt sich basierend auf der Information, dass bei Amazon Comprehend eine Sprache ausgewählt werden muss schließen, dass ein vortrainiertes Sprachenmodell verwendet wird.
+
+Ich habe außerdem über [130 GitHub Projekte](https://github.com/topics/document-classification) durchgelesen, die unter `document-classification` gelistet sind, um nun stolz behaupten zu können, dass diyisio der erste und einzige (quelloffene, bzw. gelistete) Dokument-Klassifikator ist, der für Laien entwickelt wurde. Und das sowohl in englischer, als auch in deutscher Sprache (standardmäßig werden Wörter durch ein RegEx-[Tokenpattern](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html) mit `\w` und `\b` voneinander getrennt. Deutsche Umlaute und das ß würden, wenn das Pattern nicht angepasst wird, auch getrennt werden. So würde das Wort `Großhändler` in `gro`, `h` und `ndler` gesplittet werden).
+
+
+## Kontakt
+Bei Schwierigkeiten, Fragen, Anregungen oder Feedback bitte an mich (Daniel Busch) wenden. Meine Mail ist [dakopen185@gmail.com](mailto:dakopen185@gmail.com). Natürlich antworte ich auch auf GitHub-Issues.

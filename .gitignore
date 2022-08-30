@@ -55,3 +55,6 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# Comparison to AWS Comprehend
+compare_to_aws_comprehend_custom_classifier.py
