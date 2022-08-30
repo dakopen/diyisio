@@ -189,7 +189,12 @@ Die schon trainierten Classifier können Dokumente in folgende Kategorien zuverl
 
 **Deine Trainingsdaten bleiben auf Deinem Computer gespeichert und werden nirgendwo hingesendet, sondern ausschließlich lokal analysiert.**
 
-## Mögliche Fehlerquellen:
+## Welche Dateien sind interessant (für die Bewertung)
+Wie schon erwähnt ist durch den halben Python-Django-Style "`settings.py`" und der halben "easy-to-use" Flask Web-Settings-Applikation kein schönes Produkt entstanden. Daher am besten diese Dateien ignorieren, sie dienen nur dem Demozweck. Sinnvolle und vielleicht auch für andere Projekte interessante Programmierung befindet sich zum einen in der `utils/get_documents.py`-Datei. Der künstliche Intelligenz Abschnitt umfasst jeweils eine `train_x.py` und `predict_x.py`-Datei, wobei das x für `doc2vec` bzw. `votingclassifier` steht. Aufgrund des oben beschriebenen Settings-Fiaskos ist die Programmierung in den Dateien in einer Klasse verpackt. Am besten einfach die Klasse wegdenken und sich den Code in der `init()` Funktion anschauen.
+
+Abgesehen von dem Settings-Fehler ist der Code sehr schön (auf Englisch) dokumentiert und formatiert, damit er später leicht in eine Weiterentwicklung eingbaut werden kann.
+
+## Mögliche Fehlerquellen
 Da der Text der Dokumente extrahiert wird (und nicht über OCR abgefragt wird), muss das Dokument über ein Text-Layer verfügen. In der Regel tun dies alle Dokumente, es gibt aber vereinzelt Ausnahmen. Gescannte Dokumente verfügen leider nicht über ein Text-Layer, daher können diese **nicht** klassifiziert werden.
 
 ## Zukunft von diyisio

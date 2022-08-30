@@ -70,6 +70,9 @@ def create_app(test_config=None):
         SECRET_KEY='no_use',
     )
 
+    # [I don't know anymore if this whole passage until the next function is necessary,
+    # but also I don't have the time to check everything after deleting it. It won't do harm if it stays, only that it
+    # creates the empty folder "instance" which may be used at sometime during the flask application.]
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
